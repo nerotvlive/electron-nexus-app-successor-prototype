@@ -20,7 +20,11 @@ async function initColors(bodyBg_,bg_) {
                         document.body.style.setProperty("--zyn-bg", bgMica);
                         return;
                     }
+                } else {
+                    allowMica = false;
                 }
+            } else {
+                allowMica = false;
             }
             document.body.style.setProperty("--zyn-body-bg", bodyBg_);
             document.body.style.setProperty("--zyn-bg", bg_);
