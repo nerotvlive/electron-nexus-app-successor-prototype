@@ -1,73 +1,8 @@
-<div class="w-100 h-100 gap-0 p-0 m-0 d-flex position-absolute">
-    <div id="discover-scroll-root" class="w-100 p-3 d-flex flex-column gap-3 position-relative overflow-y-auto">
+<div class="w-100 h-100 gap-2 d-flex">
+    <div class="w-100 p-3">
         <h2>Discover</h2>
-
-        <form id="discover-search-form" class="d-flex gap-2">
-            <input
-                id="discover-search-input"
-                class="form-control"
-                type="search"
-                placeholder="Suche Mods / Modpacks auf Modrinth…"
-                autocomplete="off"
-            />
-            <button class="btn btn-primary" type="submit">
-                <i class="bi bi-search"></i>
-                Suchen
-            </button>
-        </form>
-
-        <div id="discover-status" class="small text-body-secondary"></div>
-        <div id="discover-results" class="d-flex flex-column gap-2"></div>
-        <div id="discover-load-sentinel" class="py-3 text-center small text-body-secondary">Mehr laden…</div>
     </div>
+    <div class="sidecard w-100 p-3">
 
-    <div class="sidecard w-100 position-relative p-3 overflow-y-auto">
-        <div class="card">
-            <div class="card-header">
-                <strong>Filter</strong>
-            </div>
-            <div class="card-body d-flex flex-column gap-3">
-                <div>
-                    <div class="small text-body-secondary mb-2">Projekt-Typ</div>
-                    <div class="d-flex flex-column gap-1">
-                        <label><input type="checkbox" class="discover-filter-type" value="mod" checked> Mod</label>
-                        <label><input type="checkbox" class="discover-filter-type" value="modpack"> Modpack</label>
-                        <label><input type="checkbox" class="discover-filter-type" value="resourcepack"> Resourcepack</label>
-                        <label><input type="checkbox" class="discover-filter-type" value="shader"> Shader</label>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="small text-body-secondary mb-2">Loader</div>
-                    <div class="d-flex flex-column gap-1">
-                        <label><input type="checkbox" class="discover-filter-loader" value="fabric"> Fabric</label>
-                        <label><input type="checkbox" class="discover-filter-loader" value="forge"> Forge</label>
-                        <label><input type="checkbox" class="discover-filter-loader" value="neoforge"> NeoForge</label>
-                        <label><input type="checkbox" class="discover-filter-loader" value="quilt"> Quilt</label>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="discover-filter-version" class="small text-body-secondary mb-1">Minecraft-Version</label>
-                    <input id="discover-filter-version" class="form-control form-control-sm" type="text" placeholder="z. B. 1.20.1">
-                </div>
-
-                <div>
-                    <label for="discover-filter-sort" class="small text-body-secondary mb-1">Sortierung</label>
-                    <select id="discover-filter-sort" class="form-select form-select-sm">
-                        <option value="relevance" selected>Relevanz</option>
-                        <option value="downloads">Downloads</option>
-                        <option value="follows">Follower</option>
-                        <option value="newest">Neueste</option>
-                        <option value="updated">Zuletzt aktualisiert</option>
-                    </select>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button id="discover-apply-filters" type="button" class="btn btn-sm btn-primary w-100">Anwenden</button>
-                    <button id="discover-reset-filters" type="button" class="btn btn-sm btn-outline-light w-100">Reset</button>
-                </div>
-            </div>
-        </div>
     </div>
 </div>

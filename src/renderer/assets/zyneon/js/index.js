@@ -22,9 +22,11 @@ async function initColors(bodyBg_,bg_) {
                     }
                 } else {
                     allowMica = false;
+                    initMicaButton();
                 }
             } else {
                 allowMica = false;
+                initMicaButton();
             }
             document.body.style.setProperty("--zyn-body-bg", bodyBg_);
             document.body.style.setProperty("--zyn-bg", bg_);
@@ -197,47 +199,6 @@ function renderDiscoverResults(items = []) {
     }).join("");
 }
 
-function initDiscoverPage() {
-    const form = document.getElementById("discover-search-form");
-    const input = document.getElementById("discover-search-input");
-    const status = document.getElementById("discover-status");
-
-    if (!form || !input || !status) return;
-
-    const runSearch = async (query) => {
-        status.innerText = "Suche läuft…";
-        try {
-            const data = await window.electronAPI.modrinthSearchProjects({
-                query,
-                limit: 20,
-                facets: [["project_type:modpack"]]
-            });
-            const hits = Array.isArray(data?.hits) ? data.hits : [];
-            status.innerText = `${hits.length} Ergebnis(se)`;
-            renderDiscoverResults(hits);
-        } catch (err) {
-            status.innerText = "Fehler bei der Suche.";
-            renderDiscoverResults([]);
-            console.error(err);
-        }
-    };
-
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const query = input.value.trim();
-        if (!query) {
-            status.innerText = "Bitte Suchbegriff eingeben.";
-            renderDiscoverResults([]);
-            return;
-        }
-        await runSearch(query);
-    });
-
-    input.value = "sodium";
-    runSearch("sodium");
-}
-
-
 let loaded;
 async function loadPage(page, menu, params = "") {
     const contentDiv = document.getElementById('content');
@@ -263,9 +224,7 @@ async function loadPage(page, menu, params = "") {
             contentDiv.innerHTML = html;
         })
         .then(() => {
-            if (page === "discover.html") {
-                initDiscoverPage();
-            }
+
         })
         .catch(error => {
             console.error('Error:', error);

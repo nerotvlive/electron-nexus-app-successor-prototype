@@ -101,7 +101,7 @@ ipcMain.handle('modrinth-search-projects', async (_event, payload = {}) => {
 
     const response = await fetch(`https://api.modrinth.com/v2/search?${params.toString()}`, {
         headers: {
-            'User-Agent': 'ZyneonDesktop/2026.5.0-alpha.0 (contact: dev@zyneon.example)'
+            'User-Agent': 'ZyneonDesktop/Z1'
         }
     });
 
