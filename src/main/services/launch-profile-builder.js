@@ -13,9 +13,9 @@ function buildLaunchProfile(payload = {}) {
     );
 
     const mcVersion = String(payload.mcVersion || '1.20.1');
-    const username = String(payload.username || 'Player');
+    const username = String(payload.username);
     const accessToken = String(payload.accessToken || '0');
-    const uuid = String(payload.uuid || '00000000-0000-0000-0000-000000000000');
+    const uuid = String(payload.uuid);
     const memoryMin = `${Math.max(Number(payload.memoryMin ?? 1024), 256)}M`;
     const memoryMax = `${Math.max(Number(payload.memoryMax ?? 2048), Number(payload.memoryMin ?? 1024))}M`;
 

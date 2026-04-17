@@ -5,6 +5,7 @@ let bgMica = "#ffffff08";
 let darkMode = false;
 let allowMica = false;
 let launcherUnsubscribe = null;
+let authUnsubscribe = null;
 
 async function initColors(bodyBg_,bg_) {
     if(darkMode) {
@@ -227,6 +228,19 @@ function setLauncherState(text) {
     stateEl.innerText = text;
 }
 
+function updateStartButtonState(user, startButton) {
+    if (!startButton) return;
+    if (!user) {
+        startButton.disabled = true;
+        startButton.classList.add('disabled');
+        startButton.title = "Anmeldung erforderlich";
+    } else {
+        startButton.disabled = false;
+        startButton.classList.remove('disabled');
+        startButton.title = "";
+    }
+}
+
 function initLibraryLauncherUI() {
     const startButton = document.getElementById('launch-start-button');
     const stopButton = document.getElementById('launch-stop-button');
@@ -237,22 +251,18 @@ function initLibraryLauncherUI() {
         launcherUnsubscribe = null;
     }
 
-    // Toggle visibility of the username field and start button based on login status
-    window.electronAPI.authGetUser().then(user => {
-        const usernameContainer = document.getElementById('launch-username-container');
-        if (usernameContainer) {
-            usernameContainer.style.display = user ? 'none' : 'block';
-        }
+    if (authUnsubscribe) {
+        authUnsubscribe();
+        authUnsubscribe = null;
+    }
 
-        if (!user && startButton) {
-            startButton.disabled = true;
-            startButton.classList.add('disabled');
-            startButton.title = "Login required";
-        } else if (user && startButton) {
-            startButton.disabled = false;
-            startButton.classList.remove('disabled');
-            startButton.title = "";
-        }
+    // Toggle visibility of the start button based on login status
+    window.electronAPI.authGetUser().then(user => {
+        updateStartButtonState(user, startButton);
+    });
+
+    authUnsubscribe = window.electronAPI.onAuthStateChanged((status) => {
+        updateStartButtonState(status.user, startButton);
     });
 
     launcherUnsubscribe = window.electronAPI.onLauncherEvent((eventPayload) => {
@@ -282,9 +292,14 @@ function initLibraryLauncherUI() {
 
         // Get user data from AuthService
         const user = await window.electronAPI.authGetUser();
-        const username = user?.username || document.getElementById('launch-username')?.value || 'Player';
-        const accessToken = user?.accessToken;
-        const uuid = user?.uuid;
+        if (!user) {
+            appendLauncherLog(`[launch-error] Du musst angemeldet sein.\n`);
+            return;
+        }
+
+        const username = user.username;
+        const accessToken = user.accessToken;
+        const uuid = user.uuid;
 
         const build = await window.electronAPI.launcherBuildProfile({
             javaPath,

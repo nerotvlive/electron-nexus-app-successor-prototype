@@ -35,6 +35,7 @@ class AuthService extends EventEmitter {
             };
 
             this.saveSession();
+            this.emit('authStateChanged', { loggedIn: true, user: this.userData });
             return { ok: true, user: this.userData };
         } catch (error) {
             console.error('Microsoft login error:', error);
@@ -51,7 +52,7 @@ class AuthService extends EventEmitter {
         }
     }
 
-    async loginOffline(username) {
+    async loginOffline() {
         if (!this.userData) {
             this.loadSession();
         }
@@ -60,13 +61,7 @@ class AuthService extends EventEmitter {
             return { ok: false, error: 'Kein Account hinterlegt. Bitte melde dich zuerst an.' };
         }
 
-        // If the same user was previously logged in, or no username provided, reuse their data for offline
-        if (!username || this.userData.username === username) {
-            console.log('Reusing cached user data for offline session.');
-            return { ok: true, user: this.userData };
-        }
-
-        // Return the existing session regardless, as we don't allow "pure" offline without prior account
+        console.log('Using cached user data for offline session.');
         return { ok: true, user: this.userData };
     }
 
@@ -96,6 +91,7 @@ class AuthService extends EventEmitter {
         if (fs.existsSync(this.configPath)) {
             fs.unlinkSync(this.configPath);
         }
+        this.emit('authStateChanged', { loggedIn: false, user: null });
     }
 
     getUser() {

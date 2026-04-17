@@ -73,6 +73,12 @@ app.whenReady().then(() => {
         }
     });
 
+    authService.on('authStateChanged', (status) => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('auth:state-changed', status);
+        }
+    });
+
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createMainWindow();
@@ -183,8 +189,8 @@ ipcMain.handle('auth:login-microsoft', async () => {
     return await authService.loginMicrosoft();
 });
 
-ipcMain.handle('auth:login-offline', async (_event, username) => {
-    return await authService.loginOffline(username);
+ipcMain.handle('auth:login-offline', async () => {
+    return await authService.loginOffline();
 });
 
 ipcMain.handle('auth:logout', async () => {

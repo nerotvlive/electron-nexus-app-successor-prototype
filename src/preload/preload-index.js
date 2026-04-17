@@ -18,5 +18,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     authLoginOffline: (username) => ipcRenderer.invoke('auth:login-offline', username),
     authLogout: () => ipcRenderer.invoke('auth:logout'),
     authGetUser: () => ipcRenderer.invoke('auth:get-user'),
-    authIsLoggedIn: () => ipcRenderer.invoke('auth:is-logged-in')
+    authIsLoggedIn: () => ipcRenderer.invoke('auth:is-logged-in'),
+    onAuthStateChanged: (callback) => {
+        const listener = (_event, status) => callback(status);
+        ipcRenderer.on('auth:state-changed', listener);
+        return () => ipcRenderer.removeListener('auth:state-changed', listener);
+    }
 });
