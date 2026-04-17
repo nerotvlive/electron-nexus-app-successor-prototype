@@ -2,7 +2,7 @@
   "name": "zyneondesktop",
   "version": "2026.5.0-alpha.0",
   "description": "",
-  "main": "src/main/index.js",
+  "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
@@ -37,5 +37,9 @@
         "dmg"
       ]
     }
+  },
+  "dependencies": {
+    "minecraft-launcher-core": "^3.18.2",
+    "msmc": "^5.0.5"
   }
 }

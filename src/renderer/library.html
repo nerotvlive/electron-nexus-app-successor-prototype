@@ -1,8 +1,102 @@
-<div class="w-100 h-100 gap-2 d-flex">
-    <div class="w-100 p-3">
-        <h2>Library</h2>
-    </div>
-    <div class="sidecard w-100 p-3">
+<link href="./assets/zyneon/css/library.css" rel="stylesheet">
+<div id="library">
+    <div class="library-view" style="max-height: 100%; overflow: hidden; overflow-y: auto;">
+        <div class="card">
+            <div class="w-100 h-100 d-flex">
+                <div class="">
 
+                </div>
+                <div class="w-100 flex-grow-1 p-3">
+                    <strong>${instance.title}</strong>
+                    <div class="p-0 m-0">${instance.tags}</div>
+                    <p>${instance.summary}</p>
+                </div>
+            </div>
+            <hr class="m-0 p-0">
+            <div class="d-flex w-100 gap-1 p-2">
+                <div class="d-flex gap-1">
+                    <button class="btn btn-light">About</button>
+                    <button class="btn btn-light">Mods</button>
+                    <button class="btn btn-light">Maps</button>
+                    <button class="btn btn-light">Resources</button>
+                    <button class="btn btn-light">Settings</button>
+                </div>
+                <div class="d-flex gap-1 justify-content-end w-100">
+                    <span id="launch-state" class="align-self-center text-body-secondary">idle</span>
+                    <button id="launch-stop-button" class="btn btn-outline-danger">
+                        <i class="bi bi-stop-fill"></i> Stop
+                    </button>
+                    <button id="launch-start-button" class="btn btn-primary">
+                        <i class="bi bi-play-fill"></i> Start
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <strong>Launcher (MVP)</strong>
+            </div>
+            <div class="card-body d-flex flex-column gap-2">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Java Path</label>
+                        <input id="launch-java-path" class="form-control" value="java">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Main Class</label>
+                        <input id="launch-main-class" class="form-control" value="net.minecraft.client.main.Main">
+                    </div>
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <label class="form-label">Instance ID</label>
+                        <input id="launch-instance-id" class="form-control" value="default">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">MC Version</label>
+                        <input id="launch-mc-version" class="form-control" value="26.1.2">
+                    </div>
+                    <div class="col-md-4" id="launch-username-container">
+                        <label class="form-label">Username</label>
+                        <input id="launch-username" class="form-control" value="Player">
+                    </div>
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Extra JVM Args</label>
+                        <input id="launch-extra-jvm" class="form-control" placeholder="-Dfoo=bar">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Extra Game Args</label>
+                        <input id="launch-extra-game" class="form-control" placeholder="--demo">
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-2">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card flex-grow-1">
+            <div class="card-header">
+                <strong>Live Logs</strong>
+            </div>
+            <div class="card-body">
+                <pre id="launch-log-output" class="m-0 p-2 rounded" style="height: 320px; overflow: auto; background: rgba(0,0,0,0.2);"></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidecard w-100">
+        <table>
+            <tr>
+                <td><i class="bi bi-bug"></i></td>
+                <td class="w-100">Test (inbuilt,dev)</td>
+            </tr>
+        </table>
     </div>
 </div>

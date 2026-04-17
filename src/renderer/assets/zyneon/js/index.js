@@ -4,6 +4,8 @@ let bodyBgMica = "#00000000";
 let bgMica = "#ffffff08";
 let darkMode = false;
 let allowMica = false;
+let launcherUnsubscribe = null;
+
 async function initColors(bodyBg_,bg_) {
     if(darkMode) {
         document.body.setAttribute("data-bs-theme", "dark")
@@ -76,7 +78,7 @@ function initTheme() {
             color: '#00000000',
             symbolColor: '#ffffff'
         });
-        bodyBg = "#000000";
+        bodyBg = "#242425";
         bg = "#ffffff10";
         bodyBgMica = "#00000000";
         bgMica = "#ffffff08";
@@ -87,8 +89,8 @@ function initTheme() {
             color: '#00000000',
             symbolColor: '#000000'
         });
-        bodyBg = "#ffffff";
-        bg = "#00000020";
+        bodyBg = "#c6c6c6";
+        bg = "#ffffff50";
         bodyBgMica = "#ffffff50";
         bgMica = "#00000020";
         document.body.setAttribute("data-bs-theme", "light")
@@ -97,6 +99,19 @@ function initTheme() {
     if(document.getElementById("app-logo")) {
         document.getElementById("app-logo").src = darkMode ? "./assets/zyneon/img/logo_dark.png" : "./assets/zyneon/img/logo_light.png";
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get("page");
+    if(page) {
+        loadPage(page);
+    }
+    const linux = urlParams.get("linux");
+    if(linux) {
+        if(linux==="true") {
+            initTitlebarButtons();
+        }
+    }
+
     initMicaButton();
     initThemeButton();
     initColors(bodyBg,bg);
@@ -199,6 +214,106 @@ function renderDiscoverResults(items = []) {
     }).join("");
 }
 
+function appendLauncherLog(line = '') {
+    const output = document.getElementById('launch-log-output');
+    if (!output) return;
+    output.textContent += line;
+    output.scrollTop = output.scrollHeight;
+}
+
+function setLauncherState(text) {
+    const stateEl = document.getElementById('launch-state');
+    if (!stateEl) return;
+    stateEl.innerText = text;
+}
+
+function initLibraryLauncherUI() {
+    const startButton = document.getElementById('launch-start-button');
+    const stopButton = document.getElementById('launch-stop-button');
+    if (!startButton || !stopButton) return;
+
+    if (launcherUnsubscribe) {
+        launcherUnsubscribe();
+        launcherUnsubscribe = null;
+    }
+
+    // Toggle visibility of the username field based on login status
+    window.electronAPI.authGetUser().then(user => {
+        const usernameContainer = document.getElementById('launch-username-container');
+        if (usernameContainer) {
+            usernameContainer.style.display = user ? 'none' : 'block';
+        }
+    });
+
+    launcherUnsubscribe = window.electronAPI.onLauncherEvent((eventPayload) => {
+        if (eventPayload.type === 'state') {
+            setLauncherState(eventPayload.state || 'unknown');
+            if (eventPayload.error) {
+                appendLauncherLog(`[error] ${eventPayload.error}\n`);
+            }
+            if (typeof eventPayload.code !== 'undefined' || typeof eventPayload.signal !== 'undefined') {
+                appendLauncherLog(`[exit] code=${eventPayload.code} signal=${eventPayload.signal}\n`);
+            }
+            return;
+        }
+
+        if (eventPayload.type === 'log') {
+            appendLauncherLog(eventPayload.message || '');
+        }
+    });
+
+    startButton.onclick = async () => {
+        const javaPath = document.getElementById('launch-java-path')?.value || 'java';
+        const mainClass = document.getElementById('launch-main-class')?.value || 'net.minecraft.client.main.Main';
+        const instanceId = document.getElementById('launch-instance-id')?.value || 'default';
+        const mcVersion = document.getElementById('launch-mc-version')?.value || '1.20.1';
+        const extraJvmArgs = document.getElementById('launch-extra-jvm')?.value || '';
+        const extraGameArgs = document.getElementById('launch-extra-game')?.value || '';
+
+        // Get user data from AuthService
+        const user = await window.electronAPI.authGetUser();
+        const username = user?.username || document.getElementById('launch-username')?.value || 'Player';
+        const accessToken = user?.accessToken;
+        const uuid = user?.uuid;
+
+        const build = await window.electronAPI.launcherBuildProfile({
+            javaPath,
+            mainClass,
+            instanceId,
+            mcVersion,
+            username,
+            accessToken,
+            uuid,
+            extraJvmArgs,
+            extraGameArgs,
+        });
+
+        if (!build?.ok) {
+            appendLauncherLog(`[build-profile-error] ${build?.error?.message || 'Unknown error'}\n`);
+            setLauncherState('error');
+            return;
+        }
+
+        const start = await window.electronAPI.launcherStart(build.data);
+        if (!start?.ok) {
+            appendLauncherLog(`[launch-error] ${start?.error?.message || 'Unknown error'}\n`);
+            setLauncherState('error');
+            return;
+        }
+
+        appendLauncherLog(`[launch] mode=${start?.data?.mode || 'unknown'} version=${start?.data?.version || '-'}\n`);
+    };
+
+    stopButton.onclick = async () => {
+        const res = await window.electronAPI.launcherStop();
+        if (!res?.ok) {
+            appendLauncherLog(`[stop-error] ${res?.error?.message || 'Unknown error'}\n`);
+            return;
+        }
+        appendLauncherLog(`[stop] requested\n`);
+    };
+}
+
 let loaded;
 async function loadPage(page, menu, params = "") {
     const contentDiv = document.getElementById('content');
@@ -224,7 +339,9 @@ async function loadPage(page, menu, params = "") {
             contentDiv.innerHTML = html;
         })
         .then(() => {
-
+            if (page === 'library.html') {
+                initLibraryLauncherUI();
+            }
         })
         .catch(error => {
             console.error('Error:', error);
@@ -243,6 +360,7 @@ async function loadPage(page, menu, params = "") {
 initTheme();
 
 function initTitlebarButtons() {
+    document.getElementById("titlebar-buttons").classList.remove("d-none");
     const minimizeButton = document.getElementById("minimize-button");
     const maximizeButton = document.getElementById("maximize-button");
     const closeButton = document.getElementById("close-button");
@@ -260,4 +378,38 @@ function initTitlebarButtons() {
     });
 }
 
-initTitlebarButtons();
+async function updateAuthStatus() {
+    const user = await window.electronAPI.authGetUser();
+    const authStatus = document.getElementById('auth-status');
+    const authIcon = document.getElementById('auth-icon');
+    const authButton = document.getElementById('auth-button');
+
+    // Update UI if we are on the library page
+    const usernameContainer = document.getElementById('launch-username-container');
+    if (usernameContainer) {
+        usernameContainer.style.display = user ? 'none' : 'block';
+    }
+
+    if (user) {
+        authStatus.innerText = user.username;
+        authIcon.className = 'bi bi-person-check-fill';
+        authButton.onclick = async () => {
+            await window.electronAPI.authLogout();
+            updateAuthStatus();
+        };
+    } else {
+        authStatus.innerText = 'Anmelden';
+        authIcon.className = 'bi bi-person-circle';
+        authButton.onclick = async () => {
+            const res = await window.electronAPI.authLoginMicrosoft();
+            if (res.ok) {
+                updateAuthStatus();
+            } else {
+                alert("Login fehlgeschlagen: " + res.error);
+            }
+        };
+    }
+}
+
+updateAuthStatus();
+

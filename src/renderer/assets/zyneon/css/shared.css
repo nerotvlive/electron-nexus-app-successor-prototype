@@ -23,18 +23,18 @@ body {
     }
 
     .card {
-        border-radius: var(--bs-border-radius-xl);
         overflow: hidden;
         background: var(--zyn-bg);
+        border: none;
 
         .card-header {
             border-bottom: 0;
-            background: linear-gradient(to bottom,var(--zyn-bg),transparent);
+            background: transparent;
         }
 
         .card-footer {
             border-top: 0;
-            background: linear-gradient(to top,var(--zyn-bg),transparent);
+            background: transparent;
         }
     }
 
@@ -63,10 +63,9 @@ body {
     }
 
     .btn.active {
-        background: var(--bs-primary) !important;
-        border-color: var(--bs-primary-text-emphasis) !important;
-        box-shadow: 0 0 0.3rem var(--bs-primary-text-emphasis) !important;
-        color: var(--foreground);
+        background: #ffffff50 !important;
+        border: 1px #ffffff50 solid !important;
+        color: white;
     }
 }
 

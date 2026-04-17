@@ -1,0 +1,15 @@
+#library {
+    display: flex;
+    overflow: hidden;
+    min-height: calc(100vh - 41px);
+    max-height: calc(100vh - 41px);
+
+    .library-view {
+        width: 100%;
+        padding: 1rem;
+
+        .card {
+            margin-bottom: 1rem;
+        }
+    }
+}

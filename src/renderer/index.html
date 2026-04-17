@@ -12,7 +12,7 @@
         <div id="root">
             <div id="titlebar" class="draggable">
                 <span>Zyneon Desktop</span>
-                <div class="titlebar-buttons">
+                <div class="titlebar-buttons d-none" id="titlebar-buttons">
                     <button id="minimize-button" class="btn btn-outline-light">
                         <i class="bi bi-dash-lg"></i>
                     </button>
@@ -68,6 +68,12 @@
                         </li>
                         <li>
                             <hr>
+                        </li>
+                        <li>
+                            <button id="auth-button" class="btn btn-outline-light">
+                                <i id="auth-icon" class="bi bi-person-circle"></i>
+                                <span id="auth-status">Anmelden</span>
+                            </button>
                         </li>
                         <li>
                             <button class="btn btn-outline-light" onclick="location.reload();">
