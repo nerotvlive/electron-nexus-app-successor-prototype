@@ -233,9 +233,9 @@ ipcMain.on('update-titlebar-color', (event, config) => {
         } else {
             win.setBackgroundMaterial("none");
             if (config.symbolColor === '#ffffff') {
-                win.setBackgroundColor('#000000');
+                win.setBackgroundColor('#242425');
             } else {
-                win.setBackgroundColor('#ffffff');
+                win.setBackgroundColor('#c6c6c6');
             }
             win.webContents.send('init-titlebar-buttons');
         }
